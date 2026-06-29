@@ -11,7 +11,7 @@ const brands = [
   { name: 'Alkaram', vibe: 'Affordable · Lawn · Casual', country: 'pakistani', url: 'https://alkaramstudio.com', initial: 'A', color: '#D97706' },
   { name: 'Limelight', vibe: 'Trendy · Youth · Casual', country: 'pakistani', url: 'https://limelightpk.com', initial: 'L', color: '#10B981' },
   { name: 'Zara', vibe: 'Minimalist · Trendy · Chic', country: 'international', url: 'https://zara.com', initial: 'Z', color: '#1a1a1a' },
-  { name: 'H&M', vibe: 'Affordable · Basics · Trendy', country: 'international', url: 'https://hm.com', initial: 'H', color: '#CC0000' },
+  { name: 'HM', vibe: 'Affordable · Basics · Trendy', country: 'international', url: 'https://hm.com', initial: 'H', color: '#CC0000' },
   { name: 'Shein', vibe: 'Budget · Y2K · Fast Fashion', country: 'international', url: 'https://shein.com', initial: 'S', color: '#000000' },
   { name: 'Mango', vibe: 'Elegant · Mediterranean · Chic', country: 'international', url: 'https://mango.com', initial: 'M', color: '#C8973A' },
   { name: 'ASOS', vibe: 'Diverse · Youth · Trendy', country: 'international', url: 'https://asos.com', initial: 'A', color: '#2C7BE5' },
@@ -79,14 +79,13 @@ export function BrandDirectory() {
                   {brand.country === 'pakistani' ? 'Pakistani' : 'International'}
                 </span>
               </div>
-              
-                href={brand.url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={() => window.open(brand.url, '_blank')}
                 className="mt-auto rounded-full bg-primary/10 px-3 py-1.5 text-center text-xs font-semibold text-primary hover:bg-primary/20"
               >
                 Visit Site
-              </a>
+              </button>
             </div>
           ))}
         </div>
