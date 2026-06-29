@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Heart, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const filters = ['all', 'cottagecore', 'y2k', 'coquette', 'balletcore', 'clean girl']
+const filters = ['all', 'pakistani', 'cottagecore', 'y2k', 'coquette', 'balletcore', 'clean girl']
 
 const spans = ['tall', 'mid', 'short', 'tall', 'mid', 'short', 'mid', 'tall', 'short', 'mid', 'short', 'tall']
 const heightBySpan: Record<string, string> = {
@@ -15,12 +15,23 @@ const heightBySpan: Record<string, string> = {
 }
 
 const tagTitles: Record<string, string[]> = {
+  pakistani:   ['Lawn Season', 'Desi Aesthetic', 'Eid Vibes', 'Pakistani OOTD'],
   cottagecore: ['Floral Meadow', 'Garden Dream', 'Soft Picnic', 'Wildflower Fit'],
   y2k:         ['Y2K Vibes', 'Lilac Era', 'Butterfly Fit', 'Low Rise Mood'],
   coquette:    ['Bow & Lace', 'Coquette Dream', 'Pink Ribbon', 'Soft Femme'],
   balletcore:  ['Ballet Hour', 'Tulle & Pointe', 'Studio Fit', 'Dancer Core'],
   'clean girl':['Clean Minimal', 'Glazed Look', 'Soft Neutral', 'Quiet Luxury'],
   all:         ['Trending Look', 'OOTD', 'Style Inspo', 'Aesthetic Fit'],
+}
+
+const queryMap: Record<string, string> = {
+  all:         'soft pastel aesthetic fashion outfit',
+  pakistani:   'pakistani fashion shalwar kameez aesthetic',
+  cottagecore: 'cottagecore fashion soft floral aesthetic',
+  y2k:         'y2k fashion pastel aesthetic outfit',
+  coquette:    'coquette aesthetic soft pink feminine',
+  balletcore:  'balletcore ballet tulle soft aesthetic',
+  'clean girl':'clean girl minimal neutral outfit aesthetic',
 }
 
 interface Look {
@@ -44,11 +55,7 @@ export function TrendingGrid() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const query =
-      active === 'all'
-        ? 'aesthetic fashion outfit'
-        : `${active} fashion aesthetic outfit`
-
+    const query = queryMap[active] || `${active} fashion aesthetic soft`
     setLoading(true)
 
     fetch(`/api/images?query=${encodeURIComponent(query)}&per_page=12`)
@@ -138,7 +145,7 @@ export function TrendingGrid() {
                   )}
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-gradient-to-t from-pink-200/20 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
                 <button
                   type="button"
