@@ -10,7 +10,6 @@ const links = [
   { label: 'Brands', href: '#brands' },
 ]
 
-// Pinterest SVG icon
 function PinterestIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor">
@@ -60,7 +59,6 @@ export function SiteNavbar() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Pinterest Link */}
           
             href="https://pinterest.com/stylerushofficial"
             target="_blank"
@@ -109,7 +107,6 @@ export function SiteNavbar() {
               {link.label}
             </a>
           ))}
-          {/* Pinterest mobile */}
           
             href="https://pinterest.com/stylerushofficial"
             target="_blank"
