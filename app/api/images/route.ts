@@ -1,33 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const queryMap: Record<string, string> = {
-  'all': 'women fashion outfit style clothing',
-  'pakistani': 'pakistani women fashion eastern wear shalwar kameez',
-  'tops': 'women fashion tops blouse shirt stylish outfit',
-  'dresses': 'women dress frock elegant fashion outfit',
-  'skirts': 'women skirt fashion mini midi outfit',
-  'shalwar-qameez': 'pakistani shalwar kameez lawn fashion women',
-  'shoes': 'women shoes heels sandals sneakers boots fashion',
-  'accessories': 'women fashion jewelry accessories handbag stylish',
+const searchTermMap: Record<string, string> = {
+  'all':              'dress',
+  'pakistani':        'kurta',
+  'tops':             'top',
+  'dresses':          'dress',
+  'skirts':           'skirt',
+  'shalwar-qameez':   'kurta',
+  'shoes':            'shoes',
+  'accessories':      'bag',
 }
 
 export async function GET(request: NextRequest) {
   const tag = request.nextUrl.searchParams.get('query') || 'all'
-  const perPage = request.nextUrl.searchParams.get('per_page') || '12'
-  const searchQuery = queryMap[tag] || `${tag} women fashion outfit`
+  const limit = request.nextUrl.searchParams.get('per_page') || '12'
 
-  const res = await fetch(
-    `https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=${perPage}&orientation=portrait`,
-    {
-      headers: { Authorization: process.env.PEXELS_API_KEY || '' },
-      next: { revalidate: 3600 },
+  const searchTerm = searchTermMap[tag] || tag
+
+  const url = `https://asos10.p.rapidapi.com/api/v1/getProductListBySearchTerm?searchTerm=${encodeURIComponent(searchTerm)}&country=PK&currency=PKR&store=PK&limit=${limit}&offset=0`
+
+  const res = await fetch(url, {
+    headers: {
+      'x-rapidapi-host': 'asos10.p.rapidapi.com',
+      'x-rapidapi-key': process.env.RAPIDAPI_KEY || '',
     },
-  )
+    next: { revalidate: 3600 },
+  })
 
   if (!res.ok) {
     return NextResponse.json({ photos: [] }, { status: 500 })
   }
 
   const data = await res.json()
-  return NextResponse.json(data)
+
+  const products = data.products || []
+  const photos = products.map((p: any) => ({
+    id: p.id,
+    src: { large: p.imageUrl?.startsWith('http') ? p.imageUrl : `https://${p.imageUrl}` },
+    alt: p.name || 'fashion product',
+    price: p.price?.current?.text || '',
+    url: `https://www.asos.com/prd/${p.id}`,
+  }))
+
+  return NextResponse.json({ photos })
 }
