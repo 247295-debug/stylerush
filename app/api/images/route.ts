@@ -12,35 +12,39 @@ const searchTermMap: Record<string, string> = {
 }
 
 export async function GET(request: NextRequest) {
-  const tag = request.nextUrl.searchParams.get('query') || 'all'
-  const limit = request.nextUrl.searchParams.get('per_page') || '12'
+  try {
+    const tag = request.nextUrl.searchParams.get('query') || 'all'
+    const limit = request.nextUrl.searchParams.get('per_page') || '12'
 
-  const searchTerm = searchTermMap[tag] || tag
+    const searchTerm = searchTermMap[tag] || tag
 
-  const url = `https://asos10.p.rapidapi.com/api/v1/getProductListBySearchTerm?searchTerm=${encodeURIComponent(searchTerm)}&country=PK&currency=USD&store=ROW&sizeSchema=UK&limit=${limit}&offset=0`
+    const url = `https://asos10.p.rapidapi.com/api/v1/getProductListBySearchTerm?searchTerm=${encodeURIComponent(searchTerm)}&country=PK&currency=USD&store=ROW&sizeSchema=UK&limit=${limit}&offset=0`
 
-  const res = await fetch(url, {
-    headers: {
-      'x-rapidapi-host': 'asos10.p.rapidapi.com',
-      'x-rapidapi-key': process.env.RAPIDAPI_KEY || '',
-    },
-    next: { revalidate: 3600 },
-  })
+    const res = await fetch(url, {
+      headers: {
+        'x-rapidapi-host': 'asos10.p.rapidapi.com',
+        'x-rapidapi-key': process.env.RAPIDAPI_KEY || 'MISSING_KEY',
+      },
+    })
 
-  if (!res.ok) {
-    return NextResponse.json({ photos: [] }, { status: 500 })
+    const text = await res.text()
+
+    if (!res.ok) {
+      return NextResponse.json({ photos: [], error: text, status: res.status }, { status: 200 })
+    }
+
+    const data = JSON.parse(text)
+    const products = data.products || []
+    const photos = products.map((p: any) => ({
+      id: p.id,
+      src: { large: p.imageUrl?.startsWith('http') ? p.imageUrl : `https://${p.imageUrl}` },
+      alt: p.name || 'fashion product',
+      price: p.price?.current?.text || '',
+      url: `https://www.asos.com/prd/${p.id}`,
+    }))
+
+    return NextResponse.json({ photos })
+  } catch (err: any) {
+    return NextResponse.json({ photos: [], error: err.message }, { status: 200 })
   }
-
-  const data = await res.json()
-
-  const products = data.products || []
-  const photos = products.map((p: any) => ({
-    id: p.id,
-    src: { large: p.imageUrl?.startsWith('http') ? p.imageUrl : `https://${p.imageUrl}` },
-    alt: p.name || 'fashion product',
-    price: p.price?.current?.text || '',
-    url: `https://www.asos.com/prd/${p.id}`,
-  }))
-
-  return NextResponse.json({ photos })
 }
