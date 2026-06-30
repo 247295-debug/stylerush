@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
   const searchTerm = searchTermMap[tag] || tag
 
-  const url = `https://asos10.p.rapidapi.com/api/v1/getProductListBySearchTerm?searchTerm=${encodeURIComponent(searchTerm)}&country=PK&currency=PKR&store=PK&limit=${limit}&offset=0`
+  const url = `https://asos10.p.rapidapi.com/api/v1/getProductListBySearchTerm?searchTerm=${encodeURIComponent(searchTerm)}&country=PK&currency=USD&store=ROW&sizeSchema=UK&limit=${limit}&offset=0`
 
   const res = await fetch(url, {
     headers: {
